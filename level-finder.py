@@ -81,6 +81,7 @@ def plot_levels(data, levels):
 ticker = 'AAPL'  # Example ticker symbol
 # '1d': 1 day, '1mo': 1 month, '1y': 1 year,
 # 'ytd': Year to date,'max': Maximum available data
+# must be one of ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', 'ytd', 'max']
 period = '1y'
 
 

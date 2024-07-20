@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import argrelextrema
 
-def identify_levels(data, window=10, distance=0.01):
+def identify_levels(data, window=14, distance=0.01):
     """
     Identify significant support and resistance levels in the stock price data.
 
@@ -57,33 +57,40 @@ def filter_levels(levels, distance):
             filtered_levels.append(level)
     return filtered_levels
 
-def plot_levels(data, levels):
+def plot_levels(data, levels, ticker):
     """
     Plot the stock price data with support and resistance levels.
 
     Parameters:
     data (pd.DataFrame): The stock price data.
     levels (dict): Dictionary with 'support' and 'resistance' levels.
+    ticker (str): The stock ticker symbol.
     """
     plt.figure(figsize=(14, 7))
     plt.plot(data.index, data['Close'], label='Close Price', color='blue')
+    
+    ax = plt.gca()  # Get the current axes
     for level in levels['support']:
         plt.axhline(y=level, color='green', linestyle='--', linewidth=1, label='Support Level' if level == levels['support'][0] else "")
+        ax.annotate(f'{level:.2f}', xy=(1, level), xycoords=('axes fraction', 'data'), xytext=(10, 0),
+                    textcoords='offset points', ha='left', va='center', color='green', clip_on=False)
+    
     for level in levels['resistance']:
         plt.axhline(y=level, color='red', linestyle='--', linewidth=1, label='Resistance Level' if level == levels['resistance'][0] else "")
+        ax.annotate(f'{level:.2f}', xy=(1, level), xycoords=('axes fraction', 'data'), xytext=(10, 0),
+                    textcoords='offset points', ha='left', va='center', color='red', clip_on=False)
+    
     plt.xlabel('Date')
     plt.ylabel('Price')
-    plt.title('Support and Resistance Levels')
+    plt.title(f'Support and Resistance Levels for {ticker}')
     plt.legend()
     plt.show()
 
 # Input the ticker symbol and period
-ticker = 'AAPL'  # Example ticker symbol
+ticker = 'ALIT'  # Example ticker symbol
 # '1d': 1 day, '1mo': 1 month, '1y': 1 year,
 # 'ytd': Year to date,'max': Maximum available data
-# must be one of ['1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', 'ytd', 'max']
-period = '1y'
-
+period = '2y'
 
 # Download the stock price data
 data = yf.download(ticker, period=period)
@@ -92,4 +99,4 @@ data = yf.download(ticker, period=period)
 levels = identify_levels(data['Close'])
 
 # Plot the levels
-plot_levels(data, levels)
+plot_levels(data, levels, ticker)
